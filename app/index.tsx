@@ -1,18 +1,24 @@
+import { images } from "@/constants";
 import { Link } from "expo-router";
-import { Text, View } from "react-native";
+import { Image, ScrollView, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   return (
-    <View className="flex-1 items-center justify-center">
-      <Text className="text-2xl font-pblack">Smart Payslip</Text>
-      <Link
-        href={"/home"}
-        style={{
-          color: "blue",
+    <SafeAreaView className="bg-primary h-full">
+      <ScrollView
+        contentContainerStyle={{
+          height: "100%",
         }}
       >
-        Home
-      </Link>
-    </View>
+        <View className="w-full justify-center items-center h-full px-4">
+          <Image
+            source={images.logo}
+            className="w-[130px] h-[84px]"
+            resizeMode="contain"
+          />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
