@@ -1,6 +1,12 @@
-import { View, Text, KeyboardType, TextInput, Image } from "react-native";
+import {
+  View,
+  Text,
+  KeyboardType,
+  TextInput,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import React, { useState } from "react";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { icons, images } from "@/constants";
 
 interface FormFieldProps {
@@ -26,7 +32,7 @@ const FormField = ({
       <Text className="text-base text-gray-100 font-pmedium">{title}</Text>
       <View
         className="border-2 .
-      2w-full h-16 px-4 bg-black-100 rounded-2xl border-primary focus:border-secondary items-center"
+      2w-full h-16 px-4 bg-black-100 rounded-2xl border-primary focus:border-secondary items-center flex-row"
       >
         <TextInput
           className="flex-1 w-full text-white font-psemibold text-base "
@@ -38,7 +44,11 @@ const FormField = ({
         />
         {title === "Password" && (
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            <Image source={showPassword ? icons.eyeHide : icons.eye} />
+            <Image
+              className="w-6 h-6"
+              source={showPassword ? icons.eyeHide : icons.eye}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
         )}
       </View>
