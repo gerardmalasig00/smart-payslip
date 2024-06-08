@@ -17,6 +17,7 @@ import { Link, router } from "expo-router";
 import { createUser } from "@/lib/appwrite";
 import { IUser } from "@/models/user";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const SignUp = () => {
   const [form, setForm] = useState<IUser>({
@@ -28,6 +29,7 @@ const SignUp = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const submit = async () => {
+    const { setUser, setIsLoggedIn } = useGlobalContext()!;
     if (!form.username || !form.password || !form.email) {
       Alert.alert("Error", "Please fill in all the fields");
     }
@@ -35,8 +37,10 @@ const SignUp = () => {
     setSubmitting(true);
     try {
       const res = await createUser(form);
-
       // Set it to global state
+      setUser(res);
+      setIsLoggedIn(true);
+
       router.replace("/home");
     } catch (error: any) {
       Alert.alert(

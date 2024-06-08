@@ -15,10 +15,12 @@ import FormField from "@/components/FormField";
 import CustomButton from "@/components/CustomButton";
 import { Link, router } from "expo-router";
 import { IUser } from "@/models/user";
-import { signIn } from "@/lib/appwrite";
+import { getCurrentUser, signIn } from "@/lib/appwrite";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const SignIn = () => {
+  const { setUser, setIsLoggedIn } = useGlobalContext()!;
   const [form, setForm] = useState<IUser>({
     email: "",
     password: "",
@@ -33,9 +35,12 @@ const SignIn = () => {
 
     setSubmitting(true);
     try {
-      const res = await signIn(form);
-
+      await signIn(form);
+      const res = await getCurrentUser();
       // Set it to global state
+      setUser(res);
+      setIsLoggedIn(true);
+      Alert.alert("Success", "User signed successfully");
       router.replace("/home");
     } catch (error: any) {
       Alert.alert(

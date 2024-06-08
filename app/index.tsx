@@ -1,4 +1,5 @@
 import CustomButton from "@/components/CustomButton";
+import LoadingScreen from "@/components/LoadingScreen";
 import { images } from "@/constants";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { Redirect, router } from "expo-router";
@@ -7,9 +8,11 @@ import { Image, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
-  const { isLoading, isLoggedIn } = useGlobalContext()!;
+  const { isLoading, isLoggedIn, user } = useGlobalContext()!;
+  console.log(isLoggedIn, isLoading, user, "log lo");
 
-  if (!isLoading && isLoggedIn) return <Redirect href={"/home"} />;
+  if (isLoading) return <LoadingScreen />;
+  if (isLoggedIn) return <Redirect href={"/home"} />;
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView
