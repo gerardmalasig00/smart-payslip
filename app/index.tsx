@@ -9,7 +9,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const { isLoading, isLoggedIn, user } = useGlobalContext()!;
-  console.log(isLoggedIn, isLoading, user, "log lo");
 
   if (isLoading) return <LoadingScreen />;
   if (isLoggedIn) return <Redirect href={"/home"} />;
