@@ -1,4 +1,10 @@
-import { View, Text, Image, ImageSourcePropType } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  ImageSourcePropType,
+  TouchableOpacity,
+} from "react-native";
 import React from "react";
 import { Tabs } from "expo-router";
 import { icons } from "../../constants/";
@@ -6,24 +12,27 @@ import { icons } from "../../constants/";
 interface TabIConProps {
   icon: ImageSourcePropType;
   color: string;
-  name: string;
+  name?: string;
   focused: boolean;
+  isCenter?: boolean;
 }
-const TabIcon = ({ icon, color, name, focused }: TabIConProps) => {
+const TabIcon = ({ icon, color, name, focused, isCenter }: TabIConProps) => {
   return (
-    <View className="items-center justify-center gap-2">
+    <View className={`items-center justify-center gap-2 `}>
       <Image
         source={icon}
         resizeMode="contain"
         tintColor={color}
-        className="w-6 h-6"
+        className={`${isCenter ? "w-14 h-14" : "w-6 h-6"}`}
       />
-      <Text
-        className={`${focused ? "font-psemibold" : "font-pregular"}`}
-        style={{ color: color }}
-      >
-        {name}
-      </Text>
+      {name && !isCenter && (
+        <Text
+          className={`${focused ? "font-psemibold" : "font-pregular"}`}
+          style={{ color: color }}
+        >
+          {name}
+        </Text>
+      )}
     </View>
   );
 };
@@ -60,32 +69,33 @@ const TabsLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="bookmark"
-          options={{
-            title: "Bookmark",
-            headerShown: false,
-            tabBarIcon: ({ color, focused }) => (
-              <TabIcon
-                icon={icons.bookmark}
-                color={color}
-                name="Bookmark"
-                focused={focused}
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
           name="create"
           options={{
             title: "Create",
             headerShown: false,
-            tabBarIcon: ({ color, focused }) => (
-              <TabIcon
-                icon={icons.plus}
-                color={color}
-                name="Create"
-                focused={focused}
-              />
+            tabBarButton: (props) => (
+              <TouchableOpacity
+                {...props}
+                style={{
+                  position: "absolute",
+                  bottom: 20, // Adjust to position the button
+                  left: "50%",
+                  transform: [{ translateX: -35 }], // Adjust based on the button's width
+                  width: 70,
+                  height: 70,
+                  borderRadius: 35,
+                  backgroundColor: "white",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <TabIcon
+                  icon={icons.plus}
+                  color={"#FF9C01"}
+                  focused={true}
+                  isCenter
+                />
+              </TouchableOpacity>
             ),
           }}
         />
