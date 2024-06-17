@@ -1,34 +1,36 @@
-import { View, Text, FlatList, Image, RefreshControl } from "react-native";
-import React, { useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  RefreshControl,
+  Alert,
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "@/constants";
 import SearchInput from "@/components/SearchInput";
 import Trending from "@/components/Trending";
 import EmptyState from "@/components/EmptyState";
+import { getAllPayslips } from "@/lib/appwrite";
+import useAppwrite from "@/lib/useAppwrite";
+import PayslipCard from "@/components/PayslipCard";
 
-interface IData {
-  $id: string;
-}
 const Home = () => {
+  const { data: payslips, loading, refetch } = useAppwrite(getAllPayslips);
   const [refreshing, setRefreshing] = useState(false);
-  const [data, setData] = useState<IData[]>([{ $id: "1" }]);
-
   const onRefresh = async () => {
     setRefreshing(true);
-
+    await refetch();
     setRefreshing(false);
   };
 
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
-        data={data}
+        data={payslips}
         keyExtractor={(item) => item.$id}
-        renderItem={({ item }) => (
-          <Text className="text-gray-100 text-lg font-pregular mb-3">
-            {item.$id}
-          </Text>
-        )}
+        renderItem={({ item }) => <PayslipCard payslip={item} />}
         ListHeaderComponent={() => (
           <View className="my-6 px-4 space-y-6">
             <View className="justify-between items-center flex-row mb-6">
@@ -53,11 +55,10 @@ const Home = () => {
               handleChange={() => null}
               placeholder="Search Anything"
             />
-            <View className="w-full flex-1 pt-5 pb-8">
-              <Text className="text-gray-100 text-lg font-pregular mb-3">
-                Latest Videos
+            <View className="w-full flex-1 pt-5">
+              <Text className="text-gray-100 text-lg font-pregular">
+                Recently Added
               </Text>
-              <Trending payslips={[{ $id: 1 }, { $id: 2 }]} />
             </View>
           </View>
         )}

@@ -1,4 +1,5 @@
 import { IUser } from "@/models/user";
+import { IPayslip } from "@/types/models";
 import {
   Account,
   Avatars,
@@ -18,13 +19,30 @@ export const config = {
   storageId: "665b42980025bfaff424",
 };
 
+export class AppwriteError extends Error {
+  constructor(public message: string, public code?: number) {
+    super(message);
+    this.name = "AppwriteError";
+  }
+}
+
+const {
+  endpoint,
+  platform,
+  projectId,
+  databaseId,
+  userCollectionId,
+  payslipCollectionId,
+  storageId,
+} = config;
+
 // Init your React Native SDK
 const client = new Client();
 
 client
-  .setEndpoint(config.endpoint) // Your Appwrite Endpoint
-  .setProject(config.projectId) // Your project ID
-  .setPlatform(config.platform); // Your application ID or bundle ID.
+  .setEndpoint(endpoint) // Your Appwrite Endpoint
+  .setProject(projectId) // Your project ID
+  .setPlatform(platform); // Your application ID or bundle ID.
 
 const account = new Account(client);
 const avatars = new Avatars(client);
@@ -49,16 +67,21 @@ export const createUser = async ({
     await signIn({ email, password });
 
     const newUser = await databases.createDocument(
-      config.databaseId,
-      config.userCollectionId,
+      databaseId,
+      userCollectionId,
       ID.unique(),
       { accountId: newAccount.$id, email, username, avatar: avatartUrl }
     );
 
     return newUser;
   } catch (error: any) {
-    console.log(error);
-    throw new Error(error);
+    if (error.code && error.message) {
+      console.error(`Error ${error.code}: ${error.message}`);
+      throw new AppwriteError(error.message, error.code);
+    } else {
+      console.error("An unexpected error occurred", error);
+      throw new AppwriteError("An unexpected error occurred");
+    }
   }
 };
 
@@ -68,8 +91,13 @@ export const signIn = async ({ email, password }: IUser) => {
 
     return session;
   } catch (error: any) {
-    console.log(error);
-    throw new Error(error);
+    if (error.code && error.message) {
+      console.error(`Error ${error.code}: ${error.message}`);
+      throw new AppwriteError(error.message, error.code);
+    } else {
+      console.error("An unexpected error occurred", error);
+      throw new AppwriteError("An unexpected error occurred");
+    }
   }
 };
 
@@ -79,8 +107,8 @@ export const getCurrentUser = async () => {
     if (!currentAccount) throw Error;
 
     const currentUser = await databases.listDocuments(
-      config.databaseId,
-      config.userCollectionId,
+      databaseId,
+      userCollectionId,
       [Query.equal("accountId", currentAccount.$id)]
     );
 
@@ -88,7 +116,31 @@ export const getCurrentUser = async () => {
 
     return currentUser.documents[0];
   } catch (error: any) {
-    console.log(error);
-    throw new Error(error);
+    if (error.code && error.message) {
+      console.error(`Error ${error.code}: ${error.message}`);
+      throw new AppwriteError(error.message, error.code);
+    } else {
+      console.error("An unexpected error occurred", error);
+      throw new AppwriteError("An unexpected error occurred");
+    }
+  }
+};
+
+export const getAllPayslips = async (): Promise<IPayslip[]> => {
+  try {
+    const posts = await databases.listDocuments(
+      databaseId,
+      payslipCollectionId
+    );
+
+    return posts.documents as IPayslip[];
+  } catch (error: any) {
+    if (error.code && error.message) {
+      console.error(`Error ${error.code}: ${error.message}`);
+      throw new AppwriteError(error.message, error.code);
+    } else {
+      console.error("An unexpected error occurred", error);
+      throw new AppwriteError("An unexpected error occurred");
+    }
   }
 };
